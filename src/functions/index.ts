@@ -6,6 +6,7 @@ import {
 } from "../interfaces";
 import { client } from "../database";
 import format from "pg-format";
+import { QueryConfig } from "pg";
 
 export const registerDevelop = async (
   req: Request,
@@ -29,16 +30,35 @@ export const registerDevelop = async (
 
     const queryResult: developerResult = await client.query(queryString);
     const newDeveloper: iDataDeveloper = queryResult.rows[0];
-    
+
     return res.status(201).json(newDeveloper);
-  } catch (error:any) {
-    if (error.code==="23505") {
-      res.status(409).json({message:"E-mail already registered"});
+  } catch (error: any) {
+    if (error.code === "23505") {
+      res.status(409).json({ message: "E-mail already registered" });
     }
-    if(error.code==="42703"){
-        res.status(400).json({message:"requires keys: name,email"});
+    if (error.code === "42703") {
+      res.status(400).json({ message: "requires keys: name,email" });
     }
 
     return res.status(500);
   }
+};
+
+export const listAllDevelopers = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const queryString: string = `
+    SELECT
+     *
+    FROM
+     developers
+    `;
+
+  const queryConfig: QueryConfig = {
+    text: queryString,
+  };
+  const queryResult: developerResult = await client.query(queryConfig);
+
+  return res.status(200).json(queryResult.rows);
 };
