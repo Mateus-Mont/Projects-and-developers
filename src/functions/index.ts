@@ -62,3 +62,27 @@ export const listAllDevelopers = async (
 
   return res.status(200).json(queryResult.rows);
 };
+
+export const listDevelopId=async(req:Request,res:Response):Promise<Response>=>{
+    const developerId: number = parseInt(req.params.id);
+
+  const queryString=`
+  SELECT
+  *
+  FROM
+     developers
+  WHERE
+     id = $1
+  `
+  const queryConfig:QueryConfig={
+    text:queryString,
+    values:[developerId]
+    
+  }
+
+  const queryResult:developerResult= await client.query(queryConfig)
+
+
+
+    return res.status(200).json(queryResult.rows[0])
+}
