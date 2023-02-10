@@ -60,12 +60,9 @@ export const listAllDevelopers = async (
     LEFT JOIN
       develope_infos dinf ON dev."developerInfoId" = dinf.id
   `;
-  const queryConfig: QueryConfig = {
-    text: queryString,
-   
-  };
+ 
 
-  const queryResult: developerResult = await client.query(queryConfig);
+  const queryResult: developerResult = await client.query(queryString);
   return res.json(queryResult.rows);
 };
 
@@ -137,11 +134,46 @@ export const registerInfoDeveloper = async (
 
   return res.status(201).json(queryResult.rows[0]);
 
- } catch (error:any) {
-  if(error.code==="42703"){
+ } catch (error) {
+  if(error instanceof Error){
     res.status(400).json({ message: "requires keys: developerSince,preferredOS" })
   }
 
  return  res.status(500)
  }
 };
+
+export const updateDeveloper=async(req:Request,res:Response):Promise<Response>=>{
+  const idDeveloper:number=parseInt(req.params.id)
+try {
+  
+  const queryString:string=format(`
+    UPDATE
+      developers
+    SET (%I)= ROW (%L)
+    WHERE
+      id=$1
+    RETURNING*;
+
+  `,
+  Object.keys(req.body),
+  Object.values(req.body)
+  
+  )
+
+  const queryConfig:QueryConfig={
+    text:queryString,
+    values:[idDeveloper]
+  }
+
+  const queryResult:developerResult=await client.query(queryConfig)
+
+  return res.status(200).json(queryResult.rows[0])
+} catch (error) {
+
+  if(error instanceof Error){
+    res.status(400).json({message: " requires keys: name or email"})
+  }
+  return  res.status(500)
+}
+}
