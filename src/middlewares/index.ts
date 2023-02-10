@@ -6,6 +6,7 @@ import {
   developerResult,
   keysDeveloperBody,
   keysInfDeveloper,
+  valueInfDeveloperPreferred,
 } from "../interfaces";
 
 export const ensureDataBody = (
@@ -16,6 +17,9 @@ export const ensureDataBody = (
   const requiredBody: Array<string> = Object.keys(req.body);
   const requiredKeys: Array<keysDeveloperBody> = ["name", "email"];
 
+
+ 
+
   const requestKeyBody: boolean = requiredKeys.every((elem: string) =>
     requiredBody.includes(elem)
   );
@@ -23,32 +27,54 @@ export const ensureDataBody = (
   if (!requestKeyBody) {
     return res.status(400).json({ message: `requires keys: ${requiredKeys}` });
   }
-
-  const { name, email } = req.body;
+  const { name, email,...extraKey } = req.body;
 
   req.validateBody = {
     name,
     email,
   };
 
-  //   const requiredInfBody: Array<keysInfDeveloper> = [
-  //     "developerSince",
-  //     "preferredOS",
-  //   ];
-
-  //   const requiredKeyInfBody: boolean = requiredInfBody.every((elem: string) =>
-  //     requiredBody.includes(elem)
-  //   );
-
-  // if(!requiredKeyInfBody){
-  //   return  res.status(400).json({message:"kjkjk"})
+  // if (!requiredInfBody.includes(req.body.preferredOS)) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: `requires keys: ${requiredInfBody}` });
   // }
 
-  // const {developerSince, preferredOS}=req.body
-  // req.validateBodyInf={
-  //   developerSince,
-  //   preferredOS
-  // }
+  return next();
+};
+
+export const ensureDataInfoBody = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const requiredBody: Array<string> = Object.keys(req.body);
+
+  const requiredPreferred: Array<valueInfDeveloperPreferred> = ["Windows","Linux","MacOs"]
+
+  
+  const requiredInfBody: Array<keysInfDeveloper> = [
+    "developerSince",
+    "preferredOS",
+  ];
+  
+  const requiredKeyInfBody: boolean = requiredInfBody.every((elem: string) =>
+  requiredBody.includes(elem)
+  );
+  
+  if (!requiredKeyInfBody) {
+    return res.status(400).json({ message: `requires keys: ${requiredInfBody}` });
+  }
+  if(!requiredPreferred.includes(req.body.preferredOS)){
+    return res.status(400).json({message:`invalid value requires one of the values: ${requiredPreferred}` })
+    
+  }
+  
+  const { developerSince, preferredOS,...extraKey } = req.body;
+  req.validateBodyInf = {
+    developerSince,
+    preferredOS,
+  };
 
   return next();
 };
@@ -58,7 +84,6 @@ export const ensureEmailDevelopExists = async (
   res: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-
   const email = req.body.email;
   const queryString: string = `
     SELECT
@@ -74,11 +99,10 @@ export const ensureEmailDevelopExists = async (
   };
   const queryResult: developerInfResult = await client.query(queryConfig);
   if (queryResult.rows.length > 0) {
-    return res.status(409).send({ error:"email already in use"});
+    return res.status(409).send({ error: "email already in use" });
   }
 
-  next()
-
+  next();
 };
 
 export const ensureDeveloperExists = async (

@@ -98,7 +98,7 @@ export const registerInfoDeveloper = async (
   res: Response
 ): Promise<Response> => {
  try {
-  const developerRegisterInfo: iDataInfDeveloper = req.body;
+  const developerRegisterInfo: iDataInfDeveloper = req.validateBodyInf;
   const developerId: number = parseInt(req.params.id);
 
   let queryString: string = format(
@@ -176,4 +176,30 @@ try {
   }
   return  res.status(500)
 }
+}
+
+export const updateInfoDeveloper=async(req:Request,res:Response):Promise<Response>=>{
+
+
+  return res
+}
+
+export const deleteDeveloper=async(req:Request,res:Response):Promise<Response>=>{
+
+  const idDeveloper:number=parseInt(req.params.id)
+
+  const queryString:string=`
+  DELETE FROM
+    developers
+  WHERE
+    id = $1;
+  `
+const queryConfig:QueryConfig={
+  text:queryString,
+  values:[idDeveloper]
+}
+
+await client.query(queryConfig)
+
+  return res.status(204).json()
 }

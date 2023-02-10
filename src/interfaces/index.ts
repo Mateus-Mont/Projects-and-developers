@@ -29,3 +29,4 @@ export interface iDataDeveloperInfIncrement extends iDataInfDeveloper{
 export type developerInfResult=QueryResult<iDataDeveloperIncrement>;
 
 export type keysInfDeveloper ="developerSince" | "preferredOS";
+export type valueInfDeveloperPreferred="Windows" | "Linux" | "MacOs";
