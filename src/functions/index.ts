@@ -5,6 +5,7 @@ import {
   iDataDeveloperIncrement,
   iDataInfDeveloper,
   developerInfResult,
+  iDataDeveloperInfIncrement,
 } from "../interfaces";
 import { client } from "../database";
 import format from "pg-format";
@@ -35,7 +36,6 @@ export const registerDevelop = async (
 
     return res.status(201).json(newDeveloper);
   } catch (error: any) {
-
     if (error.code === "42703") {
       res.status(400).json({ message: "requires keys: name,email" });
     }
@@ -60,7 +60,6 @@ export const listAllDevelopers = async (
     LEFT JOIN
       develope_infos dinf ON dev."developerInfoId" = dinf.id
   `;
- 
 
   const queryResult: developerResult = await client.query(queryString);
   return res.json(queryResult.rows);
@@ -90,6 +89,7 @@ export const listDevelopId = async (
   };
 
   const queryResult: developerResult = await client.query(queryConfig);
+
   return res.json(queryResult.rows[0]);
 };
 
@@ -97,12 +97,12 @@ export const registerInfoDeveloper = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
- try {
-  const developerRegisterInfo: iDataInfDeveloper = req.validateBodyInf;
-  const developerId: number = parseInt(req.params.id);
+  try {
+    const developerRegisterInfo: iDataInfDeveloper = req.validateBodyInf;
+    const developerId: number = parseInt(req.params.id);
 
-  let queryString: string = format(
-    `
+    let queryString: string = format(
+      `
     INSERT INTO
       develope_infos (%I)
     VALUES
@@ -110,14 +110,14 @@ export const registerInfoDeveloper = async (
     RETURNING*  
 
   `,
-    Object.keys(developerRegisterInfo),
-    Object.values(developerRegisterInfo)
-  );
+      Object.keys(developerRegisterInfo),
+      Object.values(developerRegisterInfo)
+    );
 
-  let queryResult: developerInfResult = await client.query(queryString);
+    let queryResult: developerInfResult = await client.query(queryString);
 
-  queryString = `
-  UPDATE
+    queryString = `
+   UPDATE
      developers
    SET
      "developerInfoId" = $1
@@ -126,28 +126,32 @@ export const registerInfoDeveloper = async (
     RETURNING *;  
   `;
 
-  const queryConfig: QueryConfig = {
-    text: queryString,
-    values: [queryResult.rows[0].id, developerId],
-  };
-  await client.query(queryConfig);
+    const queryConfig: QueryConfig = {
+      text: queryString,
+      values: [queryResult.rows[0].id, developerId],
+    };
+    await client.query(queryConfig);
 
-  return res.status(201).json(queryResult.rows[0]);
+    return res.status(201).json(queryResult.rows[0]);
+  } catch (error) {
+    if (error instanceof Error) {
+      res
+        .status(400)
+        .json({ message: "requires keys: developerSince,preferredOS" });
+    }
 
- } catch (error) {
-  if(error instanceof Error){
-    res.status(400).json({ message: "requires keys: developerSince,preferredOS" })
+    return res.status(500);
   }
-
- return  res.status(500)
- }
 };
 
-export const updateDeveloper=async(req:Request,res:Response):Promise<Response>=>{
-  const idDeveloper:number=parseInt(req.params.id)
-try {
-  
-  const queryString:string=format(`
+export const updateDeveloper = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const idDeveloper: number = parseInt(req.params.id);
+  try {
+    const queryString: string = format(
+      `
     UPDATE
       developers
     SET (%I)= ROW (%L)
@@ -156,50 +160,90 @@ try {
     RETURNING*;
 
   `,
-  Object.keys(req.body),
-  Object.values(req.body)
-  
-  )
+      Object.keys(req.body),
+      Object.values(req.body)
+    );
 
-  const queryConfig:QueryConfig={
-    text:queryString,
-    values:[idDeveloper]
+    const queryConfig: QueryConfig = {
+      text: queryString,
+      values: [idDeveloper],
+    };
+
+    const queryResult: developerResult = await client.query(queryConfig);
+
+    return res.status(200).json(queryResult.rows[0]);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: " requires keys: name or email" });
+    }
+    return res.status(500);
   }
+};
 
-  const queryResult:developerResult=await client.query(queryConfig)
+export const updateInfoDeveloper = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const developerId: number = parseInt(req.params.id);
 
-  return res.status(200).json(queryResult.rows[0])
-} catch (error) {
+  let queryString:string = `
+    SELECT
+    *
+   FROM 
+     developers
+   WHERE 
+     id=$1;
+    `;
 
-  if(error instanceof Error){
-    res.status(400).json({message: " requires keys: name or email"})
-  }
-  return  res.status(500)
+  let getQueryConfig: QueryConfig = {
+    text: queryString,
+    values: [developerId],
+  };
+
+  const queryResult = await client.query(getQueryConfig)
+ 
+  let queryStringUpdate:string = format(
+     `
+    UPDATE
+      develope_infos
+    SET (%I)= ROW (%L)
+    WHERE
+      id=$1
+    RETURNING *
+    `,
+    Object.keys(req.body),
+    Object.values(req.body)
+  );
+
+
+ getQueryConfig={
+  text:queryStringUpdate,
+  values:[queryResult.rows[0].developerInfoId]
 }
-}
 
-export const updateInfoDeveloper=async(req:Request,res:Response):Promise<Response>=>{
+  const updatequeryResult:developerInfResult= await client.query(getQueryConfig);
 
+  return res.status(200).json(updatequeryResult.rows[0]);
+};
 
-  return res
-}
+export const deleteDeveloper = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const idDeveloper: number = parseInt(req.params.id);
 
-export const deleteDeveloper=async(req:Request,res:Response):Promise<Response>=>{
-
-  const idDeveloper:number=parseInt(req.params.id)
-
-  const queryString:string=`
+  const queryString: string = `
   DELETE FROM
     developers
   WHERE
     id = $1;
-  `
-const queryConfig:QueryConfig={
-  text:queryString,
-  values:[idDeveloper]
-}
+  `;
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [idDeveloper],
+  };
 
-await client.query(queryConfig)
+  await client.query(queryConfig);
 
-  return res.status(204).json()
-}
+  return res.status(204).json();
+};

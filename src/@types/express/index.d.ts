@@ -6,10 +6,11 @@ declare global {
         name: string;
         email: string;
       };
-      validateBodyInf:{
-        developerSince:Date,
-        preferredOS:string
-      }
+      validateBodyInf: {
+        developerSince: Date;
+        preferredOS: string;
+      };
+    
     }
   }
 }

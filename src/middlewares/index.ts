@@ -126,6 +126,9 @@ export const ensureDeveloperExists = async (
   };
 
   const queryResult: developerResult = await client.query(queryConfig);
+ 
+
+
   if (!queryResult.rows[0]) {
     res.status(404).json({ message: "developer not found" });
   }

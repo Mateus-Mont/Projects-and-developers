@@ -7,12 +7,11 @@ export interface iDataDeveloper {
 
 export interface iDataDeveloperIncrement extends iDataDeveloper {
   id: number;
+  
 }
 
 export type developerResult = QueryResult<iDataDeveloperIncrement>;
 export type keysDeveloperBody = "name" | "email";
-
-
 
 
 
