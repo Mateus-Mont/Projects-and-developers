@@ -7,7 +7,7 @@ import {
   keysDeveloperBody,
   keysInfDeveloper,
   valueInfDeveloperPreferred,
-} from "../interfaces";
+} from "../interfaces/developersInterface";
 
 export const ensureDataBody = (
   req: Request,
@@ -17,9 +17,6 @@ export const ensureDataBody = (
   const requiredBody: Array<string> = Object.keys(req.body);
   const requiredKeys: Array<keysDeveloperBody> = ["name", "email"];
 
-
- 
-
   const requestKeyBody: boolean = requiredKeys.every((elem: string) =>
     requiredBody.includes(elem)
   );
@@ -27,7 +24,7 @@ export const ensureDataBody = (
   if (!requestKeyBody) {
     return res.status(400).json({ message: `requires keys: ${requiredKeys}` });
   }
-  const { name, email,...extraKey } = req.body;
+  const { name, email, ...extraKey } = req.body;
 
   req.validateBody = {
     name,
@@ -50,27 +47,35 @@ export const ensureDataInfoBody = async (
 ): Promise<Response | void> => {
   const requiredBody: Array<string> = Object.keys(req.body);
 
-  const requiredPreferred: Array<valueInfDeveloperPreferred> = ["Windows","Linux","MacOs"]
+  const requiredPreferred: Array<valueInfDeveloperPreferred> = [
+    "Windows",
+    "Linux",
+    "MacOs",
+  ];
 
-  
   const requiredInfBody: Array<keysInfDeveloper> = [
     "developerSince",
     "preferredOS",
   ];
-  
+
   const requiredKeyInfBody: boolean = requiredInfBody.every((elem: string) =>
-  requiredBody.includes(elem)
+    requiredBody.includes(elem)
   );
-  
+
   if (!requiredKeyInfBody) {
-    return res.status(400).json({ message: `requires keys: ${requiredInfBody}` });
+    return res
+      .status(400)
+      .json({ message: `requires keys: ${requiredInfBody}` });
   }
-  if(!requiredPreferred.includes(req.body.preferredOS)){
-    return res.status(400).json({message:`invalid value requires one of the values: ${requiredPreferred}` })
-    
+  if (!requiredPreferred.includes(req.body.preferredOS)) {
+    return res
+      .status(400)
+      .json({
+        message: `invalid value requires one of the values: ${requiredPreferred}`,
+      });
   }
-  
-  const { developerSince, preferredOS,...extraKey } = req.body;
+
+  const { developerSince, preferredOS, ...extraKey } = req.body;
   req.validateBodyInf = {
     developerSince,
     preferredOS,
@@ -126,8 +131,6 @@ export const ensureDeveloperExists = async (
   };
 
   const queryResult: developerResult = await client.query(queryConfig);
- 
-
 
   if (!queryResult.rows[0]) {
     res.status(404).json({ message: "developer not found" });

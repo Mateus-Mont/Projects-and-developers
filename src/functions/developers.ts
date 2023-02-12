@@ -6,7 +6,7 @@ import {
   iDataInfDeveloper,
   developerInfResult,
   iDataDeveloperInfIncrement,
-} from "../interfaces";
+} from "../interfaces/developersInterface";
 import { client } from "../database";
 import format from "pg-format";
 import { QueryConfig } from "pg";
@@ -91,6 +91,37 @@ export const listDevelopId = async (
   const queryResult: developerResult = await client.query(queryConfig);
 
   return res.json(queryResult.rows[0]);
+};
+
+export const listAllProjectsDeveloper = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  const idDeveloper:number=parseInt(req.params.id)
+
+  const queryString: string = `
+
+  SELECT
+    pj.*,
+    dev."name",
+    dev."email"
+  FROM 
+    projects pj
+  FULL JOIN
+    developers dev ON pj."developerId" = dev.id
+  WHERE 
+   dev.id = $1;
+
+`;
+const queryConfig:QueryConfig={
+  text:queryString,
+  values:[idDeveloper]
+}
+
+const queryResult=await client.query(queryConfig)
+
+  return res.status(200).json(queryResult.rows);
 };
 
 export const registerInfoDeveloper = async (
@@ -186,7 +217,7 @@ export const updateInfoDeveloper = async (
 ): Promise<Response> => {
   const developerId: number = parseInt(req.params.id);
 
-  let queryString:string = `
+  let queryString: string = `
     SELECT
     *
    FROM 
@@ -200,10 +231,10 @@ export const updateInfoDeveloper = async (
     values: [developerId],
   };
 
-  const queryResult = await client.query(getQueryConfig)
- 
-  let queryStringUpdate:string = format(
-     `
+  const queryResult = await client.query(getQueryConfig);
+
+  let queryStringUpdate: string = format(
+    `
     UPDATE
       develope_infos
     SET (%I)= ROW (%L)
@@ -215,13 +246,14 @@ export const updateInfoDeveloper = async (
     Object.values(req.body)
   );
 
+  getQueryConfig = {
+    text: queryStringUpdate,
+    values: [queryResult.rows[0].developerInfoId],
+  };
 
- getQueryConfig={
-  text:queryStringUpdate,
-  values:[queryResult.rows[0].developerInfoId]
-}
-
-  const updatequeryResult:developerInfResult= await client.query(getQueryConfig);
+  const updatequeryResult: developerInfResult = await client.query(
+    getQueryConfig
+  );
 
   return res.status(200).json(updatequeryResult.rows[0]);
 };

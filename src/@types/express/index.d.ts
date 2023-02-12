@@ -10,6 +10,15 @@ declare global {
         developerSince: Date;
         preferredOS: string;
       };
+      validateBodyProjects:{
+        name: string;
+        description: string;
+        estimatedTime: Date;
+        repository: string;
+        startDate: Date;
+        endDate?: Date;
+        developerId: number;
+      }
     
     }
   }
