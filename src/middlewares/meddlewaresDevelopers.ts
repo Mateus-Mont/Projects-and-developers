@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { QueryConfig } from "pg";
+import format from "pg-format";
 import { client } from "../database";
 import {
   developerInfResult,
@@ -8,10 +9,13 @@ import {
   keysInfDeveloper,
   valueInfDeveloperPreferred,
 } from "../interfaces/developersInterface";
+import { iDataProjects } from "../interfaces/projectsInterfaces";
 
 export const ensureValidateDeveloperDataBody = (req: Request,res: Response,next: NextFunction):Response | void => {
   const requiredBody: Array<string> = Object.keys(req.body);
-  const requiredKeys: Array<keysDeveloperBody> = ["name", "email"];
+  const requiredKeys: Array<keysDeveloperBody> = ["name" ,"email"];
+
+
 
   const requestKeyBody: boolean = requiredKeys.every((elem: string) =>
     requiredBody.includes(elem)

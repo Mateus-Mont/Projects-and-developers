@@ -4,6 +4,7 @@ import {
   developerResult,
   iDataInfDeveloper,
   developerInfResult,
+
 } from "../interfaces/developersInterface";
 import { client } from "../database";
 import format from "pg-format";

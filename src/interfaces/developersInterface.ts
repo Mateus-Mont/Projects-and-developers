@@ -11,7 +11,7 @@ export interface iDataDeveloperIncrement extends iDataDeveloper {
 }
 
 export type developerResult = QueryResult<iDataDeveloperIncrement>;
-export type keysDeveloperBody = "name" | "email";
+export type keysDeveloperBody = "name"|"email";
 
 
 

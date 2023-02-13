@@ -20,6 +20,9 @@ declare global {
         endDate?: Date;
         developerId: number;
       };
+      validadeTech:{
+        name:string
+      }
     }
   }
 }

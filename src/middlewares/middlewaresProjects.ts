@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig } from "pg";
 import { client } from "../database";
-import {  keysProjectsBody, queryResultProjects} from "../interfaces/projectsInterfaces";
+import {  keysProjectsBody, keysTechBody, queryResultProjects} from "../interfaces/projectsInterfaces";
 
 export const ensureDataBodyProjects = async (req: Request,res: Response,next: NextFunction):Promise<Response | void> => {
   const requiredBody: Array<String> = Object.keys(req.body);
@@ -72,4 +72,27 @@ export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunct
 
   return next()
 
+}
+
+export const ensureDataTechnologies =async(req:Request,res:Response,next:NextFunction):Promise<Response | void>=>{
+const keysBody:Array<String>=Object.keys(req.body)
+const requiredKeys:Array<keysTechBody>=["name"]
+
+
+const requestKeyBody: boolean = requiredKeys.every((elem: string) =>{
+  return keysBody.includes(elem)
+}
+);
+if(!requestKeyBody){
+  return res.status(400).json({message:`Required key: ${requiredKeys}`})
+}
+
+
+const{name}=req.body
+
+req.validadeTech={
+  name
+}
+
+  return res.status(201).json()
 }

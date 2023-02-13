@@ -32,7 +32,11 @@ try {
   return res.status(500).json()
 }
 };
+export const registerTechnologiesProjects=async(req:Request,res:Response):Promise<Response>=>{
 
+
+  return res.status(201).json()
+}
 export const listAllProjects = async (req: Request,res: Response): Promise<Response> => {
   const queryString: string = `
     SELECT
@@ -92,6 +96,9 @@ export const updateProject = async (req: Request,res: Response): Promise<Respons
   const queryResult:queryResultProjects=await client.query(queryConfig)
   return res.status(200).json(queryResult.rows[0]);
   } catch (error) {
+    if(error instanceof Error){
+      return res.status(404).json({message:"Project not found"})
+    }
     return  res.status(500).json()
   }
 };
@@ -117,4 +124,14 @@ export const deleteProject=async(req:Request,res:Response):Promise<Response>=>{
  }
 
    
+}
+
+export const registerTechnologies=async(req:Request,res:Response):Promise<Response>=>{
+
+  const idProject:number=parseInt(req.params.id)
+
+  
+
+
+  return res.status(201).json()
 }

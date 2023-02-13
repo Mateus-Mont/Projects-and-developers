@@ -19,6 +19,7 @@ import {
 
 import {
   ensureDataBodyProjects,
+  ensureDataTechnologies,
   ensureProjectsExists,
 } from "./middlewares/middlewaresProjects";
 import {
@@ -44,6 +45,7 @@ app.delete("/developers/:id", ensureDeveloperExists, deleteDeveloper);
 
 
 app.post("/projects", ensureDataBodyProjects, createProject);
+app.post("/projects/:id/technologies",ensureProjectsExists,ensureDataTechnologies)
 app.get("/projects", listAllProjects);
 app.get("/projects/:id", ensureProjectsExists, listProjectId);
 app.patch("/projects/:id",ensureProjectsExists,ensureDataBodyProjects,updateProject);
