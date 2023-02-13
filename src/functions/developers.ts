@@ -88,9 +88,7 @@ export const listAllProjectsDeveloper = async (req: Request, res: Response): Pro
   const queryString: string = `
 
   SELECT
-    pj.*,
-    dev."name",
-    dev."email"
+    pj.*
   FROM 
     projects pj
   FULL JOIN
