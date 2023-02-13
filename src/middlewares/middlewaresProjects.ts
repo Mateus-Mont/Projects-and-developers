@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { QueryConfig } from "pg";
 import { client } from "../database";
-import { keysProjectsBody, queryResultProjects } from "../interfaces/projectsInterfaces";
+import {  keysProjectsBody, queryResultProjects} from "../interfaces/projectsInterfaces";
 
 export const ensureDataBodyProjects = async (req: Request,res: Response,next: NextFunction):Promise<Response | void> => {
   const requiredBody: Array<String> = Object.keys(req.body);
@@ -22,7 +22,7 @@ export const ensureDataBodyProjects = async (req: Request,res: Response,next: Ne
   );
 
   if (!requestKeyBody) {
-  return  res.status(400).json({ message: `requires keys: ${requiredKeys}` });
+  return  res.status(400).json({ message: `Requires keys: ${requiredKeys}` });
   }
 
   const {
@@ -48,10 +48,8 @@ export const ensureDataBodyProjects = async (req: Request,res: Response,next: Ne
   return next();
 };
 
-
-
 export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunction):Promise<Response | void >=>{
- const developerId: number = parseInt(req.params.id);
+ const developerId:number= parseInt(req.params.id);
 
   const queryString: string = `
   SELECT
@@ -66,10 +64,10 @@ export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunct
     values: [developerId],
   };
 
-  const queryResult= await client.query(queryConfig);
+  const queryResult:queryResultProjects= await client.query(queryConfig);
 
-  if (!queryResult.rows[0]) {
-    res.status(404).json({ message: "project not found" });
+  if (!queryResult.rowCount) {
+    res.status(404).json({ message: "Project not found" });
   }
 
   return next()

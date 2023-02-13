@@ -2,10 +2,8 @@ import { Request, Response } from "express";
 import {
   iDataDeveloper,
   developerResult,
-  iDataDeveloperIncrement,
   iDataInfDeveloper,
   developerInfResult,
-  iDataDeveloperInfIncrement,
 } from "../interfaces/developersInterface";
 import { client } from "../database";
 import format from "pg-format";
@@ -58,7 +56,7 @@ export const listAllDevelopers = async (req: Request,res: Response): Promise<Res
   return res.json(queryResult.rows);
 };
 
-export const listDevelopId = async (req: Request,res: Response): Promise<Response> => {
+export const listDeveloperId = async (req: Request,res: Response): Promise<Response> => {
   const developerId: number = parseInt(req.params.id);
 
   const queryString = `
@@ -155,6 +153,7 @@ export const registerInfoDeveloper = async (req: Request,res: Response): Promise
 };
 
 export const updateDeveloper = async (req: Request,res: Response):Promise<Response> => {
+try {
   const idDeveloper: number = parseInt(req.params.id);
   const updateDeveloper: iDataDeveloper = req.validateBody;
 
@@ -180,6 +179,10 @@ export const updateDeveloper = async (req: Request,res: Response):Promise<Respon
 
     const queryResult: developerResult = await client.query(queryConfig);
     return res.status(200).json(queryResult.rows[0]);
+} catch (error) {
+  return res.status(500).json()
+  
+}
 };
 
 export const updateInfoDeveloper = async (req: Request,res: Response):Promise<Response> => {
@@ -227,7 +230,8 @@ export const updateInfoDeveloper = async (req: Request,res: Response):Promise<Re
 };
 
 export const deleteDeveloper = async (req: Request,res: Response):Promise<Response> => {
-  const idDeveloper: number = parseInt(req.params.id);
+  try {
+    const idDeveloper: number = parseInt(req.params.id);
 
   const queryString: string = `
   DELETE FROM
@@ -243,4 +247,8 @@ export const deleteDeveloper = async (req: Request,res: Response):Promise<Respon
   await client.query(queryConfig);
 
   return res.status(204).json();
+  } catch (error) {
+    return res.status(500).json()
+    
+  }
 };

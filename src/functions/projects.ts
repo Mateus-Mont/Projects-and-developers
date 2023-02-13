@@ -8,6 +8,7 @@ import { client } from "../database";
 import { QueryConfig } from "pg";
 
 export const createProject = async (req: Request,res: Response): Promise<Response> => {
+try {
   const createProjectBody: iDataProjects = req.validateBodyProjects;
 
   let queryString: string = format(
@@ -24,6 +25,12 @@ export const createProject = async (req: Request,res: Response): Promise<Respons
 
   const queryResult: queryResultProjects = await client.query(queryString);
   return res.status(201).json(queryResult.rows[0]);
+} catch (error) {
+  if(error instanceof Error){
+    return res.status(400).json({message:"Developer not found"})
+  }
+  return res.status(500).json()
+}
 };
 
 export const listAllProjects = async (req: Request,res: Response): Promise<Response> => {
@@ -62,6 +69,7 @@ export const listProjectId = async ( req: Request,res: Response): Promise<Respon
 };
 
 export const updateProject = async (req: Request,res: Response): Promise<Response> => {
+  try {
   const updateBody:iDataProjects = req.validateBodyProjects;
   const idProject:number=parseInt(req.params.id)
   const queryString: string = format(
@@ -83,9 +91,13 @@ export const updateProject = async (req: Request,res: Response): Promise<Respons
 
   const queryResult:queryResultProjects=await client.query(queryConfig)
   return res.status(200).json(queryResult.rows[0]);
+  } catch (error) {
+    return  res.status(500).json()
+  }
 };
 
 export const deleteProject=async(req:Request,res:Response):Promise<Response>=>{
+ try {
   const idProject: number = parseInt(req.params.id);
   const queryString: string = `
   DELETE FROM
@@ -100,6 +112,9 @@ export const deleteProject=async(req:Request,res:Response):Promise<Response>=>{
 
   await client.query(queryConfig);
   return res.status(204).json();
+ } catch (error) {
+  return res.status(500).json()
+ }
 
    
 }

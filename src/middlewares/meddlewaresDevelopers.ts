@@ -9,11 +9,7 @@ import {
   valueInfDeveloperPreferred,
 } from "../interfaces/developersInterface";
 
-export const ensureValidateDeveloperDataBody = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Response | void => {
+export const ensureValidateDeveloperDataBody = (req: Request,res: Response,next: NextFunction):Response | void => {
   const requiredBody: Array<string> = Object.keys(req.body);
   const requiredKeys: Array<keysDeveloperBody> = ["name", "email"];
 
@@ -22,7 +18,7 @@ export const ensureValidateDeveloperDataBody = (
   );
 
   if (!requestKeyBody) {
-    return res.status(400).json({ message: `requires keys: ${requiredKeys}` });
+    return res.status(400).json({ message: `Requires keys: ${requiredKeys}` });
   }
   const { name, email, ...extraKey } = req.body;
 
@@ -35,13 +31,7 @@ export const ensureValidateDeveloperDataBody = (
   return next();
 };
 
-
-
-export const ensureDataInfoBody = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | void> => {
+export const ensureDataInfoBody = async (req: Request,res: Response,next: NextFunction): Promise<Response | void> => {
   const requiredBody: Array<string> = Object.keys(req.body);
 
   const requiredPreferred: Array<valueInfDeveloperPreferred> = [
@@ -62,13 +52,13 @@ export const ensureDataInfoBody = async (
   if (!requiredKeyInfBody) {
     return res
       .status(400)
-      .json({ message: `requires keys: ${requiredInfBody}` });
+      .json({ message: `Requires keys: ${requiredInfBody}` });
   }
   if (!requiredPreferred.includes(req.body.preferredOS)) {
     return res
       .status(400)
       .json({
-        message: `invalid value requires one of the values: ${requiredPreferred}`,
+        message: `Invalid value requires one of the values: ${requiredPreferred}`,
       });
   }
 
@@ -81,11 +71,7 @@ export const ensureDataInfoBody = async (
   return next();
 };
 
-export const ensureEmailDevelopExists = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | void> => {
+export const ensureEmailDevelopExists = async (req: Request,res: Response,next: NextFunction):Promise<Response | void> => {
   const email = req.body.email;
   const queryString: string = `
     SELECT
@@ -107,11 +93,7 @@ export const ensureEmailDevelopExists = async (
   next();
 };
 
-export const ensureDeveloperExists = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | void> => {
+export const ensureDeveloperExists = async (req: Request,res: Response,next: NextFunction):Promise<Response | void> => {
   const developerId: number = parseInt(req.params.id);
 
   const queryString: string = `
@@ -130,7 +112,7 @@ export const ensureDeveloperExists = async (
   const queryResult: developerResult = await client.query(queryConfig);
 
   if (!queryResult.rows[0]) {
-    res.status(404).json({ message: "developer not found" });
+    res.status(404).json({ message: "Developer not found" });
   }
 
   return next();

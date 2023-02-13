@@ -9,7 +9,7 @@ import {
 import {
   registerDeveloper,
   listAllDevelopers,
-  listDevelopId,
+  listDeveloperId,
   registerInfoDeveloper,
   updateDeveloper,
   deleteDeveloper,
@@ -33,12 +33,12 @@ const app: Application = express();
 app.use(express.json());
 
 app.post( "/developers",ensureValidateDeveloperDataBody,ensureEmailDevelopExists,registerDeveloper);
-app.post("/developers/:id/info", ensureDataInfoBody,ensureDeveloperExists,registerInfoDeveloper);
+app.post("/developers/:id/infos", ensureDataInfoBody,ensureDeveloperExists,registerInfoDeveloper);
 app.get("/developers", listAllDevelopers);
-app.get("/developers/:id", ensureDeveloperExists, listDevelopId);
+app.get("/developers/:id", ensureDeveloperExists, listDeveloperId);
 app.get("/developers/:id/projects",ensureDeveloperExists,listAllProjectsDeveloper);
 app.patch("/developers/:id",ensureDeveloperExists,ensureEmailDevelopExists, ensureValidateDeveloperDataBody,updateDeveloper);
-app.patch("/developers/:id/info",ensureDeveloperExists,ensureDataInfoBody,updateInfoDeveloper);
+app.patch("/developers/:id/infos",ensureDeveloperExists,ensureDataInfoBody,updateInfoDeveloper);
 app.delete("/developers/:id", ensureDeveloperExists, deleteDeveloper);
 
 
