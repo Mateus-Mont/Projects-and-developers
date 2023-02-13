@@ -17,3 +17,6 @@ export interface iDataProjectsIncrement extends iDataProjects {
 export type queryResultProjects = QueryResult<iDataProjectsIncrement>;
 
 export type keysProjectsBody = "name"| "description"| "estimatedTime"| "repository"| "startDate" | "endDate"  |"developerId"
+
+
+

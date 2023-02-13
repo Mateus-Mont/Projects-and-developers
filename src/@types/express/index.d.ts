@@ -6,6 +6,7 @@ declare global {
         name: string;
         email: string;
       };
+     
       validateBodyInf: {
         developerSince: Date;
         preferredOS: string;
@@ -18,7 +19,8 @@ declare global {
         startDate: Date;
         endDate?: Date;
         developerId: number;
-      }
+      };
+    
     
     }
   }

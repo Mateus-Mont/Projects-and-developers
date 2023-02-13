@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { keysProjectsBody } from "../interfaces/projectsInterfaces";
+import { QueryConfig } from "pg";
+import { client } from "../database";
+import { keysProjectsBody, queryResultProjects } from "../interfaces/projectsInterfaces";
 
-export const ensureDataBodyProjects = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | void> => {
+export const ensureDataBodyProjects = async (req: Request,res: Response,next: NextFunction):Promise<Response | void> => {
   const requiredBody: Array<String> = Object.keys(req.body);
   const requiredKeys: Array<keysProjectsBody> = [
     "name",
@@ -14,14 +12,17 @@ export const ensureDataBodyProjects = async (
     "repository",
     "startDate",
     "developerId",
+    "endDate"
   ];
 
-  const requestKeyBody: boolean = requiredKeys.every((elem: string) =>
-    requiredBody.includes(elem)
+
+  const requestKeyBody: boolean = requiredKeys.every((elem: string) =>{
+      return requiredBody.includes(elem)
+    }
   );
 
   if (!requestKeyBody) {
-    res.status(400).json({ message: `requires keys: ${requiredKeys}` });
+  return  res.status(400).json({ message: `requires keys: ${requiredKeys}` });
   }
 
   const {
@@ -46,3 +47,31 @@ export const ensureDataBodyProjects = async (
 
   return next();
 };
+
+
+
+export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunction):Promise<Response | void >=>{
+ const developerId: number = parseInt(req.params.id);
+
+  const queryString: string = `
+  SELECT
+  *
+  FROM
+    projects
+  WHERE
+     id = $1;
+  `;
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [developerId],
+  };
+
+  const queryResult= await client.query(queryConfig);
+
+  if (!queryResult.rows[0]) {
+    res.status(404).json({ message: "project not found" });
+  }
+
+  return next()
+
+}

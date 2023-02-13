@@ -9,7 +9,7 @@ import {
   valueInfDeveloperPreferred,
 } from "../interfaces/developersInterface";
 
-export const ensureDataBody = (
+export const ensureValidateDeveloperDataBody = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -31,14 +31,11 @@ export const ensureDataBody = (
     email,
   };
 
-  // if (!requiredInfBody.includes(req.body.preferredOS)) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: `requires keys: ${requiredInfBody}` });
-  // }
 
   return next();
 };
+
+
 
 export const ensureDataInfoBody = async (
   req: Request,

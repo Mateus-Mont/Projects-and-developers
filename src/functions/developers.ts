@@ -10,14 +10,11 @@ import {
 import { client } from "../database";
 import format from "pg-format";
 import { QueryConfig } from "pg";
+import { queryResultProjects } from "../interfaces/projectsInterfaces";
 
-export const registerDevelop = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const registerDeveloper = async (req: Request, res: Response): Promise<Response> => {
   try {
     const developerRegisterBody: iDataDeveloper = req.validateBody;
-
     const queryString: string = format(
       `
     INSERT INTO
@@ -44,11 +41,7 @@ export const registerDevelop = async (
   }
 };
 
-export const listAllDevelopers = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  const developerId: number = parseInt(req.params.id);
+export const listAllDevelopers = async (req: Request,res: Response): Promise<Response> => {
 
   const queryString = `
     SELECT
@@ -65,10 +58,7 @@ export const listAllDevelopers = async (
   return res.json(queryResult.rows);
 };
 
-export const listDevelopId = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const listDevelopId = async (req: Request,res: Response): Promise<Response> => {
   const developerId: number = parseInt(req.params.id);
 
   const queryString = `
@@ -89,17 +79,12 @@ export const listDevelopId = async (
   };
 
   const queryResult: developerResult = await client.query(queryConfig);
-
   return res.json(queryResult.rows[0]);
 };
 
-export const listAllProjectsDeveloper = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const listAllProjectsDeveloper = async (req: Request, res: Response): Promise<Response> => {
 
   const idDeveloper:number=parseInt(req.params.id)
-
   const queryString: string = `
 
   SELECT
@@ -119,15 +104,11 @@ const queryConfig:QueryConfig={
   values:[idDeveloper]
 }
 
-const queryResult=await client.query(queryConfig)
-
-  return res.status(200).json(queryResult.rows);
+ const queryResult:queryResultProjects=await client.query(queryConfig)
+ return res.status(200).json(queryResult.rows);
 };
 
-export const registerInfoDeveloper = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const registerInfoDeveloper = async (req: Request,res: Response): Promise<Response> => {
   try {
     const developerRegisterInfo: iDataInfDeveloper = req.validateBodyInf;
     const developerId: number = parseInt(req.params.id);
@@ -147,7 +128,7 @@ export const registerInfoDeveloper = async (
 
     let queryResult: developerInfResult = await client.query(queryString);
 
-    queryString = `
+  queryString = `
    UPDATE
      developers
    SET
@@ -175,25 +156,24 @@ export const registerInfoDeveloper = async (
   }
 };
 
-export const updateDeveloper = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const updateDeveloper = async (req: Request,res: Response):Promise<Response> => {
   const idDeveloper: number = parseInt(req.params.id);
-  try {
-    const queryString: string = format(
-      `
-    UPDATE
-      developers
-    SET (%I)= ROW (%L)
-    WHERE
-      id=$1
-    RETURNING*;
+  const updateDeveloper: iDataDeveloper = req.validateBody;
+
+  const queryString: string = format(
+   `
+  UPDATE
+    developers
+  SET (%I)= ROW (%L)
+  WHERE
+    id=$1
+  RETURNING*;
 
   `,
-      Object.keys(req.body),
-      Object.values(req.body)
+   Object.keys(updateDeveloper),
+   Object.values(updateDeveloper)
     );
+
 
     const queryConfig: QueryConfig = {
       text: queryString,
@@ -201,20 +181,10 @@ export const updateDeveloper = async (
     };
 
     const queryResult: developerResult = await client.query(queryConfig);
-
     return res.status(200).json(queryResult.rows[0]);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: " requires keys: name or email" });
-    }
-    return res.status(500);
-  }
 };
 
-export const updateInfoDeveloper = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const updateInfoDeveloper = async (req: Request,res: Response):Promise<Response> => {
   const developerId: number = parseInt(req.params.id);
 
   let queryString: string = `
@@ -258,10 +228,7 @@ export const updateInfoDeveloper = async (
   return res.status(200).json(updatequeryResult.rows[0]);
 };
 
-export const deleteDeveloper = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const deleteDeveloper = async (req: Request,res: Response):Promise<Response> => {
   const idDeveloper: number = parseInt(req.params.id);
 
   const queryString: string = `
