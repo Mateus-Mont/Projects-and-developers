@@ -20,8 +20,6 @@ declare global {
         endDate?: Date;
         developerId: number;
       };
-    
-    
     }
   }
 }
