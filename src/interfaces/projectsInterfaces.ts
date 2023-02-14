@@ -23,7 +23,7 @@ export type keysProjectsBody = "name"| "description"| "estimatedTime"| "reposito
 
 
 export interface keysRegisterTech{
-  name:string
+  technologyName:string
 }
 
 export interface iDataTechIncrement extends  keysRegisterTech{
@@ -31,4 +31,4 @@ export interface iDataTechIncrement extends  keysRegisterTech{
 }
 
 export type queryResultTech=QueryResult<iDataTechIncrement>
-export type keysTechBody="name"
+export type keysTechBody="technologyName"

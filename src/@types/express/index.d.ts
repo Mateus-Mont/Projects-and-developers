@@ -21,7 +21,7 @@ declare global {
         developerId: number;
       };
       validadeTech:{
-        name:string
+        technologyName:string
       }
     }
   }

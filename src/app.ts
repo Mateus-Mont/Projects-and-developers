@@ -25,8 +25,10 @@ import {
 import {
   createProject,
   deleteProject,
+  deleteTechnologies,
   listAllProjects,
   listProjectId,
+  registerTechnologies,
   updateProject,
 } from "./functions/projects";
 
@@ -45,11 +47,12 @@ app.delete("/developers/:id", ensureDeveloperExists, deleteDeveloper);
 
 
 app.post("/projects", ensureDataBodyProjects, createProject);
-app.post("/projects/:id/technologies",ensureProjectsExists,ensureDataTechnologies)
+app.post("/projects/:id/technologies",ensureProjectsExists,ensureDataTechnologies,registerTechnologies)
 app.get("/projects", listAllProjects);
 app.get("/projects/:id", ensureProjectsExists, listProjectId);
 app.patch("/projects/:id",ensureProjectsExists,ensureDataBodyProjects,updateProject);
 app.delete("/projects/:id", ensureProjectsExists,deleteProject);
+app.delete("/projects/:id/technologies/:tecnologyName",ensureProjectsExists,deleteTechnologies)
 
 app.listen(3000, async () => {
   console.log("server is runing");

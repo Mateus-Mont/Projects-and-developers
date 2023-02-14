@@ -37,7 +37,7 @@ FOREIGN KEY("technologyId") REFERENCES technologies("id")
 
 CREATE TABLE technologies(
 id SERIAL PRIMARY KEY,
-name VARCHAR(30)NOT NULL
+"technologyName" VARCHAR(30)NOT NULL
 );
 
 INSERT INTO technologies(name)

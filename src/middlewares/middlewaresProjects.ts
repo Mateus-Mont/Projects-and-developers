@@ -76,7 +76,7 @@ export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunct
 
 export const ensureDataTechnologies =async(req:Request,res:Response,next:NextFunction):Promise<Response | void>=>{
 const keysBody:Array<String>=Object.keys(req.body)
-const requiredKeys:Array<keysTechBody>=["name"]
+const requiredKeys:Array<keysTechBody>=["technologyName"]
 
 
 const requestKeyBody: boolean = requiredKeys.every((elem: string) =>{
@@ -88,11 +88,10 @@ if(!requestKeyBody){
 }
 
 
-const{name}=req.body
+const{technologyName}=req.body
 
 req.validadeTech={
-  name
+  technologyName
 }
-
-  return res.status(201).json()
+next()
 }

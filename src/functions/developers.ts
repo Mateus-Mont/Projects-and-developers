@@ -231,14 +231,14 @@ export const updateInfoDeveloper = async (req: Request,res: Response):Promise<Re
 };
 
 export const deleteDeveloper = async (req: Request,res: Response):Promise<Response> => {
-  try {
+
     const idDeveloper: number = parseInt(req.params.id);
 
   const queryString: string = `
   DELETE FROM
     developers
   WHERE
-    id = $1;
+    id = $1
   `;
   const queryConfig: QueryConfig = {
     text: queryString,
@@ -248,8 +248,5 @@ export const deleteDeveloper = async (req: Request,res: Response):Promise<Respon
   await client.query(queryConfig);
 
   return res.status(204).json();
-  } catch (error) {
-    return res.status(500).json()
-    
-  }
+
 };
