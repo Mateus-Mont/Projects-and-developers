@@ -36,7 +36,7 @@ const app: Application = express();
 app.use(express.json());
 
 app.post( "/developers",ensureValidateDeveloperDataBody,ensureEmailDevelopExists,registerDeveloper);
-app.post("/developers/:id/infos", ensureDataInfoBody,ensureDeveloperExists,registerInfoDeveloper);
+app.post("/developers/:id/infos", ensureDeveloperExists,ensureDataInfoBody,registerInfoDeveloper);
 app.get("/developers", listAllDevelopers);
 app.get("/developers/:id", ensureDeveloperExists, listDeveloperId);
 app.get("/developers/:id/projects",ensureDeveloperExists,listAllProjectsDeveloper);
