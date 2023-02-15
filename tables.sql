@@ -40,7 +40,7 @@ id SERIAL PRIMARY KEY,
 "technologyName" VARCHAR(30)NOT NULL
 );
 
-INSERT INTO technologies(name)
+INSERT INTO technologies("technologyName")
 VALUES('javaScript'),('Python'),('React'),
 ('Express.js'),('HTML'),('CSS'),('Django'),
 ('PostgreSQL'),('MongoDB');

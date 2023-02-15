@@ -116,7 +116,7 @@ export const ensureDeveloperExists = async (req: Request,res: Response,next: Nex
   const queryResult: developerResult = await client.query(queryConfig);
 
   if (!queryResult.rows[0]) {
-    res.status(404).json({ message: "Developer not found" });
+   return res.status(404).json({ message: "Developer not found" });
   }
 
   return next();

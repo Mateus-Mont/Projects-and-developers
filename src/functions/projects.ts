@@ -105,7 +105,7 @@ export const updateProject = async (req: Request,res: Response): Promise<Respons
   return res.status(200).json(queryResult.rows[0]);
   } catch (error) {
     if(error instanceof Error){
-      return res.status(404).json({message:"Project not found"})
+      return res.status(404).json({message:"Developer not found"})
     }
     return  res.status(500).json()
   }
@@ -159,7 +159,7 @@ const techOptions=  {
 
 
   let queryString:string=`
-   SELECT
+  SELECT
      *
   FROM
     technologies

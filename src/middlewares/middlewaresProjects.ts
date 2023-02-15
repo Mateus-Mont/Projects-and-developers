@@ -11,8 +11,8 @@ export const ensureDataBodyProjects = async (req: Request,res: Response,next: Ne
     "estimatedTime",
     "repository",
     "startDate",
-    "developerId",
-    "endDate"
+    "developerId"
+   
   ];
 
 
@@ -67,7 +67,7 @@ export const ensureProjectsExists =async(req:Request,res:Response,next:NextFunct
   const queryResult:queryResultProjects= await client.query(queryConfig);
 
   if (!queryResult.rowCount) {
-    res.status(404).json({ message: "Project not found" });
+   return res.status(404).json({ message: "Project not found" });
   }
 
   return next()
